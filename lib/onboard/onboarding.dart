@@ -103,7 +103,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
       bottomSheet: isLastPage
           ? Padding(
               padding: const EdgeInsets.only(
-                bottom: 30,
+                bottom: 10,
               ),
               child: SingleChildScrollView(
                 child: Container(

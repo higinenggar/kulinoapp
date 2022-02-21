@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:kulino_app/widget/kulino_info.dart';
+import 'package:kulino_app/widget/task.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -15,288 +15,144 @@ class _DashboardPageState extends State<DashboardPage> {
   String filterType = "today";
   DateTime datenow = DateTime.now();
 
-  var monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
+      appBar: _buildAppBar(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppBar(
-                automaticallyImplyLeading: false,
-                backgroundColor: Colors.indigo,
-                elevation: 0,
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios_new_sharp,
-                    color: Colors.white,
-                    size: 20,
+          Padding(
+            padding: const EdgeInsets.only(left: 8, top: 10),
+            child: Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 15,
+                    top: 3,
                   ),
-                  onPressed: () {},
+                  height: 40,
+                  width: 40,
+                  //margin: EdgeInsets.only(left: 5),
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/avatar.jpg'),
+                  ),
                 ),
-                title: Text(
-                  'Personal Tasks',
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  'Hai, Darcy',
                   style: TextStyle(
-                    fontSize: 25,
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'Inter',
                   ),
-                ),
-                //centerTitle: true,
-                actions: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.short_text,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
+                )
+              ],
+            ),
+          ),
+          KulinoInfo(),
+          Container(
+            padding: EdgeInsets.only(top: 5, left: 20, bottom: 10),
+            child: Text(
+              'To do',
+              style: TextStyle(
+                fontSize: 22,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
               ),
-              Container(
-                height: 70,
-                color: Colors.indigo,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            changeFilter("today");
-                          },
-                          child: Text(
-                            'Today',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 4,
-                          width: 120,
-                          color: (filterType == "today")
-                              ? Colors.white
-                              : Colors.transparent,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            changeFilter("monthly");
-                          },
-                          child: Text(
-                            'Monthly',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 4,
-                          width: 120,
-                          color: (filterType == "monthly")
-                              ? Colors.white
-                              : Colors.transparent,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              (filterType == "monthly")
-                  ? TableCalendar(
-                      firstDay: DateTime.utc(2010, 10, 16),
-                      lastDay: DateTime.utc(2030, 3, 14),
-                      focusedDay: DateTime.now(),
-                      startingDayOfWeek: StartingDayOfWeek.monday,
-                      calendarFormat: CalendarFormat.week,
-                    )
-                  : Container(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Today ${monthNames[datenow.month - 1]}, ${datenow.day}/${datenow.year}",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      taskWidget(
-                          Colors.redAccent, "Meeting with client", "9.00 AM"),
-                      taskWidget(
-                          Colors.teal, "Buy some foods for tom", "13.00 PM"),
-                      taskWidget(
-                          Colors.blueAccent, "Completing course", "19.00 PM"),
-                    ],
-                  ),
-                ),
-              )
-            ],
+            ),
+          ),
+          Expanded(
+            child: Tasks(),
           ),
         ],
       ),
-    );
-  }
-
-  void changeFilter(String filter) {
-    filterType = filter;
-    setState(() {});
-  }
-
-  Slidable taskWidget(Color color, String tittle, String time) {
-    return Slidable(
-      startActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        children: [],
-      ),
-      child: Container(
-        height: 80,
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              offset: Offset(0, 9),
-              blurRadius: 20,
-              spreadRadius: 1,
-            )
-          ],
+      bottomNavigationBar: _buildBottomNavbar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Row(
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              height: 25,
-              width: 25,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: color,
-                  width: 4,
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  tittle,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 17,
-                  ),
-                ),
-                Text(
-                  time,
-                  style: TextStyle(
-                    color: Colors.grey,
-                    //fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: Container(),
-            ),
-            Container(
-              height: 50,
-              width: 4,
-              color: color,
-            ),
-          ],
+        elevation: 0,
+        backgroundColor: Color(0xff432F70),
+        onPressed: () {},
+        child: Icon(
+          Icons.add,
+          size: 30,
         ),
       ),
     );
   }
 }
 
-// AppBar _buildAppBar() {
-//   return AppBar(
-//     automaticallyImplyLeading: false,
-//     backgroundColor: Colors.white,
-//     elevation: 0,
-//     title: Row(
-//       children: [
-//         Container(
-//           margin: EdgeInsets.only(
-//             left: 5,
-//             top: 5,
-//           ),
-//           height: 45,
-//           width: 45,
-//           //margin: EdgeInsets.only(left: 5),
-//           child: CircleAvatar(
-//             backgroundImage: AssetImage('assets/images/avatar.jpg'),
-//           ),
-//         ),
-//         SizedBox(
-//           width: 15,
-//         ),
-//         Text(
-//           'Hi, Amanda',
-//           style: TextStyle(
-//             color: Colors.black,
-//             fontSize: 26,
-//             fontWeight: FontWeight.bold,
-//           ),
-//         )
-//       ],
-//     ),
-//     // ignore: prefer_const_literals_to_create_immutables
-//     actions: [
-//       Icon(
-//         Icons.more_vert,
-//         color: Colors.black,
-//         size: 30,
-//       )
-//     ],
-//   );
-// }
+Widget _buildBottomNavbar() {
+  return Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 5,
+            blurRadius: 20,
+          )
+        ]),
+    child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Color(0xffEAE4FF),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          selectedItemColor: Color(0xFF713770),
+          unselectedItemColor: Color(0xffb1a1e9),
+          items: [
+            BottomNavigationBarItem(
+              label: 'Home',
+              icon: Icon(
+                Icons.home_rounded,
+                size: 30,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Person',
+              icon: Icon(
+                Icons.person_rounded,
+                size: 30,
+              ),
+            ),
+          ],
+        )),
+  );
+}
+
+AppBar _buildAppBar() {
+  return AppBar(
+    automaticallyImplyLeading: false,
+    backgroundColor: Colors.white,
+    elevation: 2,
+    title: Image.asset(
+      'assets/images/logo.png',
+      fit: BoxFit.cover,
+      height: 20,
+    ),
+    actions: [
+      Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Icon(
+          Icons.notifications_outlined,
+          color: Color(0xFF432F70),
+          size: 25,
+        ),
+      )
+    ],
+  );
+}
